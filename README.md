@@ -1,9 +1,9 @@
 # cassfetch
 
-Supply ids of rows in a colunfamily and `cassfetch` will output the rows as json.
+Supply ids of rows in a colunfamily on `stdin` and `cassfetch` will output the rows
+as json, e.g:
 
-e.g:
-
+    cat my-list-of-ids.txt |
     cassfetch \
     --host example.com \
     --keyspace mykeyspace \
