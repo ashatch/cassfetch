@@ -3,6 +3,8 @@ package main
 import (
 	"errors"
 	"flag"
+	"fmt"
+	"os"
 	"reflect"
 	"strings"
 )
@@ -26,13 +28,31 @@ func GetCassFetchFlags() (CassFetchFlags, error) {
 	flag.StringVar(&flags.Keyfield, "keyfield", "", "Key field (e.g. id or key)")
 	flag.Parse()
 
+	missing := missingParameters(flags)
+
+	if len(missing) > 0 {
+		message := fmt.Sprintf("Missing parameters: %s", strings.ToLower(strings.Join(missing, ", ")))
+		usage(message)
+
+		return flags, errors.New(message)
+	}
+
+	return flags, nil
+}
+
+func missingParameters(flags CassFetchFlags) (missing []string) {
 	v := reflect.ValueOf(flags)
 	for i := 0; i < v.NumField(); i++ {
 		field := v.Field(i).Interface()
 		if field == "" {
-			return flags, errors.New("missing argument: " + strings.ToLower(v.Type().Field(i).Name))
+			fieldName := v.Type().Field(i).Name
+			missing = append(missing, fieldName)
 		}
 	}
+	return
+}
 
-	return flags, nil
+func usage(message string) {
+	fmt.Fprintf(os.Stderr, "\n%s\n\n", message)
+	flag.Usage()
 }

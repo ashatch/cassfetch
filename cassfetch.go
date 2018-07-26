@@ -15,7 +15,7 @@ func main() {
 	flags, err := GetCassFetchFlags()
 
 	if err != nil {
-		log.Fatal(err)
+		os.Exit(1)
 	}
 
 	columns := strings.Split(flags.Columns, ",")
